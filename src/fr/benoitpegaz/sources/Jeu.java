@@ -6,19 +6,36 @@ public class Jeu {
 
     Jeu(LecteurNiveaux lect) {
         l = lect;
+        prochainNiveau();
     }
 
-    Niveau niveau() {
+    public Niveau niveau() {
         return n;
     }
-    boolean prochainNiveau() {
-        Niveau nouveau = l.lisProchainNiveau();
-        if(nouveau != null) {
-            n = nouveau;
-            return true;
-        } else {
-            return false;
-        }
 
+    public boolean deplace(int x, int y) {
+        boolean resultat = n.deplace(x, y);
+        if (n.estTermine())
+            prochainNiveau();
+        return resultat;
     }
+
+    public void prochainNiveau() {
+        Niveau nouveau = l.lisProchainNiveau();
+        if (nouveau != null) {
+            n = nouveau;
+        } else {
+            System.exit(0);
+        }
+    }
+
+
+    public int lignePousseur() {
+        return n.lignePousseur();
+    }
+
+    public int colonnePousseur() {
+        return n.colonnePousseur();
+    }
+
 }

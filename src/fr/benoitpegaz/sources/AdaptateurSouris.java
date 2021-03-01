@@ -25,36 +25,31 @@ package fr.benoitpegaz.sources;
  *          Domaine universitaire
  *          38401 Saint Martin d'Hères
  */
-import fr.benoitpegaz.sources.Global.*;
-import fr.benoitpegaz.sources.Structures.*;
-import fr.benoitpegaz.sources.*;
-import javax.swing.*;
 
-// L'interface runnable déclare une méthode run
-public class DemoFenetre implements Runnable {
-	public void run() {
-		// Creation d'une fenetre
-		JFrame frame = new JFrame("Jeu du Sokoban");
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-		// Ajout de notre composant de dessin dans la fenetre
-		AireDeDessin aire = new AireDeDessin();
-		frame.add(aire);
+public class AdaptateurSouris extends MouseAdapter {
+	Jeu j;
+	NiveauGraphique n;
 
-		// Ecoute des évènements liés à la souris dans l'AireDeDessin
-		aire.addMouseListener(new EcouteurDeSouris(aire));
-
-		// Un clic sur le bouton de fermeture clos l'application
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		// On fixe la taille et on demarre
-		frame.setSize(500, 300);
-		frame.setVisible(true);
+	AdaptateurSouris(Jeu jeu, NiveauGraphique niv) {
+		j = jeu;
+		n = niv;
 	}
 
-	public static void main(String[] args) {
-		// Swing s'exécute dans un thread séparé. En aucun cas il ne faut accéder directement
-		// aux composants graphiques depuis le thread principal. Swing fournit la méthode
-		// invokeLater pour demander au thread de Swing d'exécuter la méthode run d'un Runnable.
-		SwingUtilities.invokeLater(new DemoFenetre());
+	@Override
+	public void mousePressed(MouseEvent e) {
+		int l = e.getY() / n.hauteurCase();
+		int c = e.getX() / n.largeurCase();
+
+		int dL = l - j.lignePousseur();
+		int dC = c - j.colonnePousseur();
+		int sum = dC + dL;
+		sum = sum * sum;
+		if ((dC * dL == 0) && (sum == 1)) {
+			j.deplace(dL, dC);
+			n.repaint();
+		}
 	}
 }

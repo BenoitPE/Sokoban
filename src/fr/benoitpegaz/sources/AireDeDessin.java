@@ -1,4 +1,4 @@
-/*
+package fr.benoitpegaz.sources;/*
  * Sokoban - Encore une nouvelle version (à but pédagogique) du célèbre jeu
  * Copyright (C) 2018 Guillaume Huard
  *
@@ -24,18 +24,22 @@
  *          Domaine universitaire
  *          38401 Saint Martin d'Hères
  */
-package fr.benoitpegaz.sources;
+import fr.benoitpegaz.sources.Global.*;
+import fr.benoitpegaz.sources.Structures.*;
+import fr.benoitpegaz.sources.*;
+
+import fr.benoitpegaz.sources.Global.Configuration;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.InputStream;
-import fr.benoitpegaz.sources.Global.Configuration;
-
 
 class AireDeDessin extends JComponent {
+	String message;
 	int counter;
 	Image img;
+	Point position;
 
 	public AireDeDessin() {
 		// Chargement de l'image de la même manière que le fichier de niveaux
@@ -50,7 +54,10 @@ class AireDeDessin extends JComponent {
 		counter = 1;
 	}
 
-	@Override
+	void fixePosition(int x, int y) {
+		position = new Point(x, y);
+	}
+
 	public void paintComponent(Graphics g) {
 		System.out.println("Entree dans paintComponent : " + counter++);
 
@@ -62,13 +69,14 @@ class AireDeDessin extends JComponent {
 		int width = getSize().width;
 		int height = getSize().height;
 
-		// On calcule le centre de la zone et un rayon
-		Point center = new Point(width/2, height/2);
+		// Si la position n'est pas fixée, on calcule le centre de la zone et un rayon
+		if (position == null)
+			position = new Point(width/2, height/2);
 
 		// On efface tout
 		drawable.clearRect(0, 0, width, height);
 
-		// On affiche une petite image au milieu
-		drawable.drawImage(img, center.x-20, center.y-20, 40, 40, null);
+		// On affiche une petite image à la position donnée
+		drawable.drawImage(img, position.x-20, position.y-20, 40, 40, null);
 	}
 }

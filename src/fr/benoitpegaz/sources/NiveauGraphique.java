@@ -7,19 +7,21 @@ import java.io.InputStream;
 
 import fr.benoitpegaz.sources.Global.Configuration;
 
+
 public class NiveauGraphique extends JComponent {
+    Image pousseur, mur, sol, caisse, but, caisseSurBut;
     Jeu j;
-    Image but, caisse, caisseSurBut, mur, pousseur, sol;
+    int largeurCase;
+    int hauteurCase;
 
-    public NiveauGraphique(Jeu jeu) {
+    NiveauGraphique(Jeu jeu) {
         j = jeu;
-        but = lisImage("But");
-        caisse = lisImage("Caisse");
-        caisseSurBut = lisImage("CaisseSurBut");
-        mur = lisImage("Mur");
         pousseur = lisImage("Pousseur");
+        mur = lisImage("Mur");
         sol = lisImage("Sol");
-
+        caisse = lisImage("Caisse");
+        but = lisImage("But");
+        caisseSurBut = lisImage("CaisseSurBut");
     }
 
     private Image lisImage(String nom) {
@@ -36,39 +38,51 @@ public class NiveauGraphique extends JComponent {
         return null;
     }
 
+    private void tracer(Graphics2D g, Image i, int x, int y, int l, int h) {
+        g.drawImage(i, x, y, l, h, null);
+    }
 
-    @Override
     public void paintComponent(Graphics g) {
         Graphics2D drawable = (Graphics2D) g;
         Niveau n = j.niveau();
 
         int largeur = getSize().width;
         int hauteur = getSize().height;
-        int largeurCase = largeur / n.colonnes();
-        int hauteurCase = hauteur / n.lignes();
+        largeurCase = largeur / n.colonnes();
+        hauteurCase = hauteur / n.lignes();
+        // On prend des cases carrées
+        largeurCase = Math.min(largeurCase, hauteurCase);
+        hauteurCase = largeurCase;
 
+        // On efface tout
         drawable.clearRect(0, 0, largeur, hauteur);
-        for (int ligne = 0; ligne < n.lignes(); ligne++) {
+        for (int ligne = 0; ligne < n.lignes(); ligne++)
             for (int colonne = 0; colonne < n.colonnes(); colonne++) {
                 int x = colonne * largeurCase;
                 int y = ligne * hauteurCase;
-
-                if (n.aBut(ligne, colonne)) {
-                    g.drawImage(but, x, y, largeurCase, hauteurCase, null);
-                } else {
-                    g.drawImage(sol, x, y, largeurCase, hauteurCase, null);
-                }
-
-                if (n.aMur(ligne, colonne)) {
-                    g.drawImage(mur, x, y, largeurCase, hauteurCase, null);
-                } else if (n.aCaisse(ligne, colonne)) {
-                    g.drawImage(caisse, x, y, largeurCase, hauteurCase, null);
-                } else if (n.aPousseur(ligne, colonne)) {
-                    g.drawImage(pousseur, x, y, largeurCase, hauteurCase, null);
-                }
+                // Tracé du sol
+                if (n.aBut(ligne, colonne))
+                    tracer(drawable, but, x, y, largeurCase, hauteurCase);
+                else
+                    tracer(drawable, sol, x, y, largeurCase, hauteurCase);
+                // Tracé des objets
+                if (n.aMur(ligne, colonne))
+                    tracer(drawable, mur, x, y, largeurCase, hauteurCase);
+                else if (n.aPousseur(ligne, colonne))
+                    tracer(drawable, pousseur, x, y, largeurCase, hauteurCase);
+                else if (n.aCaisse(ligne, colonne))
+                    if (n.aBut(ligne, colonne))
+                        tracer(drawable, caisseSurBut, x, y, largeurCase, hauteurCase);
+                    else
+                        tracer(drawable, caisse, x, y, largeurCase, hauteurCase);
             }
-        }
+    }
 
+    int hauteurCase() {
+        return hauteurCase;
+    }
 
+    int largeurCase() {
+        return largeurCase;
     }
 }
