@@ -63,9 +63,10 @@ public class AdaptateurClavier extends KeyAdapter {
                 break;
             case KeyEvent.VK_Q:
             case KeyEvent.VK_A:
+            case KeyEvent.VK_ESCAPE:
                 System.exit(0);
                 break;
-            case KeyEvent.VK_ESCAPE:
+            case KeyEvent.VK_F:
                 f.toggleFullscreen();
                 break;
         }

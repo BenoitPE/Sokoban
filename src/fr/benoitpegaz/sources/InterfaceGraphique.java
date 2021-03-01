@@ -35,7 +35,7 @@ public class InterfaceGraphique implements Runnable {
         frame.addKeyListener(new AdaptateurClavier(j, niv, this));
         frame.add(niv);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 300);
+        frame.setSize( j.niveau().colonnes() * 50, j.niveau().lignes() * 50);
         frame.setVisible(true);
     }
 }
